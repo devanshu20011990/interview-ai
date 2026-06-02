@@ -197,12 +197,30 @@ app.post("/api/answer", async (req, res) => {
   const system = [
     "You are an expert interview assistant that helps a candidate answer questions in real time.",
     `The interview field/domain is: ${field}.`,
-    "Give a clear, confident, well-structured answer the candidate can speak aloud.",
-    "Prioritize accuracy and the LATEST research/developments. Use the provided web sources when relevant and cite them inline like [1], [2].",
-    "Be concise but complete: lead with a direct answer, then key supporting points. Avoid filler.",
-  ].join(" ");
+    "ALWAYS give the COMPLETE answer yourself, in full, ready to be spoken aloud in an interview.",
+    "CRITICAL: Never tell the user to 'refer to the documentation', 'check the docs', 'read the manual', 'see the official guide', 'look it up', or to consult any external resource. You must extract the actual answer FROM those sources and state it directly. The candidate cannot go read anything during an interview — they must be able to say your answer out loud immediately.",
+    "If the provided web sources contain the relevant information, synthesize and explain it in your own words as the answer. Do NOT just point to where the answer lives.",
+    "Be specific and concrete: include the actual definitions, steps, code, commands, numbers, examples, or explanations the question calls for — not a description of where to find them.",
+    "Prioritize accuracy and the LATEST research/developments. You may cite sources inline like [1], [2] to back up claims, but the answer itself must be self-contained.",
+    "",
+    "LENGTH & STYLE: Aim for a BALANCED answer that takes roughly 30-60 seconds to speak aloud. Write in natural, flowing PARAGRAPHS (not bullet lists) so it sounds conversational and human when spoken. Lead with a direct 1-2 sentence answer, then expand with the key supporting points woven into prose. No filler, no deflection, no 'I would recommend reading'.",
+    "",
+    "LANGUAGE: Use simple, plain, everyday language that is easy to say out loud and easy for anyone to understand. Prefer short, common words over technical jargon. When a technical term is necessary, briefly explain it in plain words. Avoid buzzwords, complex phrasing, and run-on sentences. Imagine explaining it clearly to a smart person who is new to the topic.",
+    "",
+    "ALWAYS structure your response in exactly these three parts, using these exact headers:",
+    "Answer:",
+    "(the natural spoken paragraphs described above)",
+    "",
+    "Example:",
+    "(one short, concrete, real-world example or code/scenario that illustrates the point — keep it brief and speakable)",
+    "",
+    "Likely follow-up questions:",
+    "(2-3 short questions the interviewer is likely to ask next, as a simple list)",
+    "",
+    "If you are genuinely unsure or the sources lack detail, give your best expert answer from your own knowledge and briefly note the caveat — but still answer fully.",
+  ].join("\n");
 
-  const userMsg = `Interview question:\n"${question}"\n\nLive web sources:\n${sourceBlock}`;
+  const userMsg = `Interview question:\n"${question}"\n\nUse the web sources below as reference material to construct your own complete spoken answer. Do not tell me to read them — give me the answer itself.\n\nWeb sources:\n${sourceBlock}`;
 
   // 2) Stream the LLM answer (SSE)
   res.setHeader("Content-Type", "text/event-stream");
@@ -223,7 +241,8 @@ app.post("/api/answer", async (req, res) => {
       body: JSON.stringify({
         model: LLM_MODEL,
         stream: true,
-        temperature: 0.4,
+        temperature: 0.3,
+        max_tokens: 900,
         messages: [
           { role: "system", content: system },
           { role: "user", content: userMsg },
