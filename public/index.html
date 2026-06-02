@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interview AI Assistant</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar / controls -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">🎙️</div>
+        <div>
+          <h1>Interview AI</h1>
+          <p class="tagline">Listen · Search · Answer</p>
+        </div>
+      </div>
+
+      <div class="status-card" id="statusCard">
+        <div class="status-row"><span class="dot" id="dotLLM"></span> LLM model</div>
+        <div class="status-row"><span class="dot" id="dotTavily"></span> Tavily key</div>
+        <div class="status-row"><span class="dot" id="dotMic"></span> Microphone (browser)</div>
+      </div>
+
+      <label class="field-label">Web search mode</label>
+      <select id="searchMode" class="field-select">
+        <option value="keyless">Keyless (DuckDuckGo) — no key, results less reliable</option>
+        <option value="tavily">Tavily — needs free key, results more reliable</option>
+        <option value="none">Off — offline, LLM knowledge only</option>
+      </select>
+      <p class="hint" id="searchHint">Keyless: works with zero sign-up, but results can be less complete or accurate.</p>
+
+      <label class="field-label">Interview field</label>
+      <select id="fieldSelect" class="field-select">
+        <option value="general">General / Any field</option>
+        <option value="software engineering">Software Engineering</option>
+        <option value="data science & ML">Data Science & ML</option>
+        <option value="medicine & healthcare">Medicine & Healthcare</option>
+        <option value="finance & economics">Finance & Economics</option>
+        <option value="law">Law</option>
+        <option value="marketing">Marketing</option>
+        <option value="product management">Product Management</option>
+        <option value="research / academia">Research / Academia</option>
+      </select>
+
+      <label class="field-label">Audio input source</label>
+      <div class="source-toggle">
+        <button class="src-btn active" data-src="mic">🎤 Microphone</button>
+        <button class="src-btn" data-src="system">🖥️ System / Tab</button>
+      </div>
+      <p class="hint" id="sourceHint">Microphone: captures your device mic live in the browser.</p>
+
+      <button id="listenBtn" class="listen-btn">Start Listening</button>
+
+      <div class="manual">
+        <label class="field-label">Or type a question</label>
+        <textarea id="manualInput" rows="3" placeholder="Type any interview question and press Ask…"></textarea>
+        <button id="askBtn" class="ask-btn">Ask</button>
+      </div>
+
+      <p class="footnote">Mic uses the browser Web Speech API. System/Tab audio is recorded and transcribed server-side. Answers are grounded in live web search when available.</p>
+    </aside>
+
+    <!-- Main panel -->
+    <main class="main">
+      <section class="transcript-pane">
+        <div class="pane-head">
+          <h2>Heard question</h2>
+          <span class="live-badge" id="liveBadge">idle</span>
+        </div>
+        <div id="transcript" class="transcript">Your captured / typed question will appear here…</div>
+      </section>
+
+      <section class="answer-pane">
+        <div class="pane-head">
+          <h2>AI Answer</h2>
+          <button id="copyBtn" class="copy-btn" title="Copy answer">Copy</button>
+        </div>
+        <div id="answer" class="answer">
+          <div class="placeholder">Answers appear here, written so you can speak them aloud — concise, structured, and grounded in the latest information.</div>
+        </div>
+
+        <div id="sources" class="sources"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
