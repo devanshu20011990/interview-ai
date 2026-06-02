@@ -231,16 +231,16 @@ async function askQuestion(question) {
         else if (type === "sources") renderSources(JSON.parse(data));
         else if (type === "token") {
           answerText += JSON.parse(data);
-          els.answer.innerHTML = escapeHtml(answerText) + '<span class="cursor">&nbsp;</span>';
+          els.answer.innerHTML = formatAnswer(answerText) + '<span class="cursor">&nbsp;</span>';
           els.answer.scrollTop = els.answer.scrollHeight;
         } else if (type === "error") {
           els.answer.textContent = "Error: " + (JSON.parse(data).error || "unknown");
         } else if (type === "done") {
-          els.answer.innerHTML = escapeHtml(answerText);
+          els.answer.innerHTML = formatAnswer(answerText);
         }
       }
     }
-    if (answerText) els.answer.innerHTML = escapeHtml(answerText);
+    if (answerText) els.answer.innerHTML = formatAnswer(answerText);
   } catch (e) {
     els.answer.textContent = "Request failed: " + e.message;
   }
@@ -259,6 +259,14 @@ function renderSources(sources) {
 
 function escapeHtml(s) {
   return s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+}
+
+// Escape, then bold the known section headers for easy live scanning.
+function formatAnswer(s) {
+  let html = escapeHtml(s);
+  html = html.replace(/^(Answer:|Example:|Likely follow-up questions:)/gim,
+    '<span class="ans-head">$1</span>');
+  return html;
 }
 
 // ── Copy answer ─────────────────────────────────────────────
