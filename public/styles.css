@@ -144,6 +144,8 @@ textarea { resize: vertical; }
   white-space: pre-wrap;
 }
 .answer .placeholder { color: var(--muted); }
+.answer .ans-head { display: inline-block; font-weight: 700; color: var(--accent); margin-top: 12px; letter-spacing: 0.2px; }
+.answer .ans-head:first-child { margin-top: 0; }
 .answer .cursor { display: inline-block; width: 8px; background: var(--accent); animation: blink 1s steps(1) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 
